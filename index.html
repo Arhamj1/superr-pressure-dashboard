@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Reliable Under Pressure · SupeRR Selector S2</title>
+<meta name="description" content="The most reliable batters and bowlers under pressure, IPL and T20I 2022-26: SupeRR Selector Season 2, Round 1 by Arham Jain.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<style>
+html, body { margin: 0; background: #FFFFFF; }
+body { -webkit-font-smoothing: antialiased; }
+
+  
+  .rr {
+    --rr-pink: #E5157A; --rr-pink-deep: #B80F61; --rr-pink-soft: #FDEAF3; --rr-pink-line: #F6C2DB;
+    --rr-navy: #13215B; --rr-blue: #254AA5; --rr-ink: #1A1E33; --rr-muted: #626885; --rr-line: #E8E4EE;
+    --rr-bg: #FFFFFF; --rr-surface: #FAF8FC; --rr-grey: #B9BCCB;
+    color-scheme: light;
+    background: var(--rr-bg); color: var(--rr-ink);
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    display: flex; flex-direction: column;
+  }
+  .rr * { box-sizing: border-box; }
+  .rr p { margin: 0; line-height: 1.55; }
+  .rr h1, .rr h2, .rr h3 { margin: 0; text-wrap: balance; }
+
+  .rr-hero { background: var(--rr-navy); color: #fff; padding: clamp(24px, 4vw, 44px) max(16px, 4vw) 0; position: relative; overflow: hidden; }
+  .rr-hero::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: var(--rr-pink); }
+  .rr-hero-inner { max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; padding-bottom: clamp(24px, 3vw, 36px); }
+  .rr-kicker { font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: #F7A8CD; font-weight: 600; }
+  .rr-hero h1 { font-family: 'Source Serif 4', Georgia, serif; font-weight: 400; font-size: clamp(30px, 4.4vw, 48px); line-height: 1.08; color: #fff; }
+  .rr-hero .rr-lead { max-width: 70ch; color: #D6DBF2; font-size: 16px; }
+  .rr-hero .rr-lead b { color: #fff; font-weight: 600; }
+  .rr-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin-top: 10px; }
+  .rr-kpi { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .rr-kpi .lbl { font-size: 12px; color: #B9C1E4; }
+  .rr-kpi .val { font-family: 'Source Serif 4', Georgia, serif; font-size: 30px; color: #fff; font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .rr-kpi .who { font-size: 13px; color: #F7A8CD; font-weight: 600; }
+
+  .rr-nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 3; background: var(--rr-bg); border-bottom: 1px solid var(--rr-line); }
+  .rr-nav-inner { max-width: 1180px; margin: 0 auto; padding: 0 max(16px, 4vw); display: flex; gap: 22px; overflow-x: auto; }
+  .rr-nav a { color: var(--rr-muted); text-decoration: none; font-size: 14px; font-weight: 600; padding: 14px 0 12px; border-bottom: 3px solid transparent; white-space: nowrap; }
+  .rr-nav a:hover, .rr-nav a:focus-visible { color: var(--rr-pink); border-bottom-color: var(--rr-pink); outline: none; }
+
+  .rr-main { max-width: 1180px; width: 100%; margin: 0 auto; padding: 8px max(16px, 4vw) 48px; display: flex; flex-direction: column; gap: 56px; }
+  .rr-sec { display: flex; flex-direction: column; gap: 18px; scroll-margin-top: 64px; padding-top: 32px; }
+  .rr-sec-head { display: flex; flex-direction: column; gap: 6px; }
+  .rr-eyebrow { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--rr-pink); font-weight: 700; }
+  .rr-sec h2 { font-family: 'Source Serif 4', Georgia, serif; font-weight: 400; font-size: clamp(24px, 3vw, 32px); color: var(--rr-navy); }
+  .rr-sec .rr-sub { color: var(--rr-muted); max-width: 78ch; font-size: 15px; }
+
+  .rr-grid2 { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 20px; align-items: start; }
+  .rr-split { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr)); gap: 20px; }
+  @media (max-width: 900px) { .rr-grid2 { grid-template-columns: minmax(0, 1fr); } }
+  .rr-card { background: var(--rr-bg); border: 1px solid var(--rr-line); border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 12px; min-width: 0; box-shadow: 0 1px 2px rgba(19,33,91,0.04); }
+  .rr-card h3 { font-size: 15px; font-weight: 700; color: var(--rr-navy); }
+  .rr-card .rr-note { font-size: 12px; color: var(--rr-muted); }
+
+  .rr-legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: var(--rr-muted); align-items: center; }
+  .rr-legend i { display: inline-block; vertical-align: -1px; margin-right: 6px; }
+  .rr-legend .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--rr-navy); }
+  .rr-legend .ring { width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--rr-pink-deep); background: #fff; }
+  .rr-legend .bar { width: 18px; height: 6px; border-radius: 3px; background: var(--rr-pink-line); }
+  .rr-legend .dash { width: 16px; border-top: 2px dashed var(--rr-grey); vertical-align: 3px; }
+  .rr-legend .rrline { width: 18px; height: 3px; background: var(--rr-pink); }
+  .rr-legend .lgline { width: 18px; height: 3px; background: var(--rr-grey); }
+
+  .rr-chart { position: relative; width: 100%; min-height: 290px; }
+  .rr-chart.sm { min-height: 160px; }
+  .rr-chart svg text { font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif; }
+  .rr-tip { position: absolute; pointer-events: none; background: #fff; border: 1px solid var(--rr-line); box-shadow: 0 6px 18px rgba(19,33,91,0.14); border-radius: 8px; padding: 8px 10px; font-size: 12px; color: var(--rr-ink); white-space: nowrap; z-index: 4; }
+  .rr-tip b { color: var(--rr-navy); }
+  .rr-tip span { color: var(--rr-muted); display: block; }
+
+  .rr-scroll { overflow-x: auto; }
+  .rr table { border-collapse: separate; border-spacing: 0; width: 100%; font-size: 13px; font-variant-numeric: tabular-nums; }
+  .rr th { text-align: left; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; font-weight: 700; color: var(--rr-muted); padding: 8px 10px; border-bottom: 2px solid var(--rr-pink); white-space: nowrap; background: var(--rr-bg); }
+  .rr td { padding: 9px 10px; border-bottom: 1px solid var(--rr-line); white-space: nowrap; color: var(--rr-ink); }
+  .rr tbody tr:hover td { background: var(--rr-pink-soft); }
+  .rr th.n, .rr td.n { text-align: right; }
+  .rr td.rk { font-family: 'Source Serif 4', Georgia, serif; color: var(--rr-pink); font-size: 16px; width: 1%; }
+  .rr td.nm { font-weight: 700; color: var(--rr-navy); }
+  .rr td.pos { color: #157347; font-weight: 600; }
+  .rr td.neg { color: #B42318; font-weight: 600; }
+  .rr .pctcell { display: flex; align-items: center; gap: 8px; justify-content: flex-end; }
+  .rr .pctbar { width: 64px; height: 6px; border-radius: 3px; background: var(--rr-pink-soft); overflow: hidden; flex: none; }
+  .rr .pctbar > div { height: 100%; background: var(--rr-pink); border-radius: 3px; }
+  .rr .chip { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: var(--rr-surface); border: 1px solid var(--rr-line); color: var(--rr-muted); }
+  .rr .chip.new { background: var(--rr-pink-soft); border-color: var(--rr-pink-line); color: var(--rr-pink-deep); }
+  .rr .chip.flag { background: #FFF5E6; border-color: #F5D7A6; color: #8A5A00; }
+
+  .rr-gaps { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 16px; }
+  .rr-gap-tag { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+  .rr-gap-tag.bad { color: var(--rr-pink-deep); }
+  .rr-gap-tag.ok { color: var(--rr-muted); }
+
+  .rr-method { background: var(--rr-surface); border: 1px solid var(--rr-line); border-radius: 12px; padding: 20px 22px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 18px; }
+  .rr-method div { display: flex; flex-direction: column; gap: 6px; }
+  .rr-method h3 { font-size: 14px; color: var(--rr-navy); font-weight: 700; }
+  .rr-method p { font-size: 13px; color: var(--rr-muted); }
+  .rr-foot { font-size: 12px; color: var(--rr-muted); border-top: 1px solid var(--rr-line); padding-top: 16px; }
+  @media (prefers-reduced-motion: no-preference) { .rr tbody tr td { transition: background-color .15s ease; } }
+
+.rr-hero { padding-top: max(clamp(24px, 4vw, 44px), env(safe-area-inset-top, 0px)); }
+.rr-foot a { color: #B80F61; }
+</style>
+</head>
+<body>
+<div class="rr">
+  <header class="rr-hero" id="top">
+    <div class="rr-hero-inner">
+      <div class="rr-kicker">SupeRR Selector · Season 2 · Round 1</div>
+      <h1>The Most Reliable Players Under Pressure</h1>
+      <p class="rr-lead"><b data-draw="topbat" data-source="picks_batters" data-field="player" data-where="rank=1">—</b> and <b data-draw="topbowl" data-source="picks_bowlers" data-field="player" data-where="rank=1">—</b> lead IPL and T20I cricket under pressure, 2022-26. Pressure comes from the scoreboard: how far one ordinary ball could swing the batting side's chance of winning. Every pick is measured against other players in the same match and phase.</p>
+      <div class="rr-kpis">
+        <div class="rr-kpi"><span class="lbl">Top-10 in 500 resamples</span><span class="val" data-draw="k1" data-source="picks_batters" data-field="top10_pct" data-where="rank=1">—</span><span class="who" data-draw="k1w" data-source="picks_batters" data-field="player" data-where="rank=1">—</span></div>
+        <div class="rr-kpi"><span class="lbl">Dismissals vs peers, per 100 balls</span><span class="val" data-draw="k2" data-source="picks_batters" data-field="dismissals_vs_peers_pts" data-where="rank=1">—</span><span class="who" data-draw="k2w" data-source="picks_batters" data-field="player" data-where="rank=1">—</span></div>
+        <div class="rr-kpi"><span class="lbl">Top-10 in 500 resamples</span><span class="val" data-draw="k3" data-source="picks_bowlers" data-field="top10_pct" data-where="rank=1">—</span><span class="who" data-draw="k3w" data-source="picks_bowlers" data-field="player" data-where="rank=1">—</span></div>
+        <div class="rr-kpi"><span class="lbl">Runs saved per over vs peers</span><span class="val" data-draw="k4" data-source="picks_bowlers" data-field="runs_saved_per_over_vs_peers" data-where="rank=1">—</span><span class="who" data-draw="k4w" data-source="picks_bowlers" data-field="player" data-where="rank=1">—</span></div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="rr-nav" aria-label="Sections">
+    <div class="rr-nav-inner">
+      <a href="#batters">Top batters</a>
+      <a href="#bowlers">Top bowlers</a>
+      <a href="#rr-gaps">RR gaps</a>
+      <a href="#auction">Auction options</a>
+      <a href="#method">Method</a>
+    </div>
+  </nav>
+
+  <main class="rr-main">
+    <section class="rr-sec" id="batters">
+      <div class="rr-sec-head">
+        <span class="rr-eyebrow">Batting</span>
+        <h2>Top 10 batters under pressure</h2>
+        <p class="rr-sub">Strike rate and dismissals are compared with every other batter in the same match and phase, so openers and finishers are each judged against their own bar.</p>
+      </div>
+      <div class="rr-grid2">
+        <div class="rr-card">
+          <h3>How settled is each place?</h3>
+          <div class="rr-legend"><span><i class="dot"></i>Final rank</span><span><i class="ring"></i>Median</span><span><i class="bar"></i>Middle 80% of 500 resamples</span><span><i class="dash"></i>Top-10 line</span></div>
+          <div class="rr-chart" data-draw="rangebat" data-source="picks_batters"></div>
+        </div>
+        <div class="rr-card">
+          <h3>Pressure record</h3>
+          <div class="rr-scroll">
+            <table data-source="picks_batters" data-row-key="player">
+              <thead><tr><th data-field="rank">#</th><th data-field="player">Batter</th><th class="n" data-field="pressure_balls">Balls</th><th class="n" data-field="pressure_sr">SR</th><th class="n" data-field="sr_vs_peers">SR vs peers</th><th class="n" data-field="dismissals_vs_peers_pts">Outs vs peers</th><th class="n" data-field="top10_pct">Top-10 rate</th></tr></thead>
+              <tbody data-draw="tabbat"></tbody>
+            </table>
+          </div>
+          <p class="rr-note">Balls and SR are on pressure balls only. Outs vs peers is in dismissals per 100 balls; negative means he gets out less often.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="rr-sec" id="bowlers">
+      <div class="rr-sec-head">
+        <span class="rr-eyebrow">Bowling</span>
+        <h2>Top 10 bowlers under pressure</h2>
+        <p class="rr-sub">Bowlers are rated on runs saved against what an average bowler concedes in the same situation, with each wicket converted into the runs it costs the batting side.</p>
+      </div>
+      <div class="rr-grid2">
+        <div class="rr-card">
+          <h3>How settled is each place?</h3>
+          <div class="rr-legend"><span><i class="dot"></i>Final rank</span><span><i class="ring"></i>Median</span><span><i class="bar"></i>Middle 80% of 500 resamples</span><span><i class="dash"></i>Top-10 line</span></div>
+          <div class="rr-chart" data-draw="rangebowl" data-source="picks_bowlers"></div>
+        </div>
+        <div class="rr-card">
+          <h3>Pressure record</h3>
+          <div class="rr-scroll">
+            <table data-source="picks_bowlers" data-row-key="player">
+              <thead><tr><th data-field="rank">#</th><th data-field="player">Bowler</th><th class="n" data-field="pressure_balls">Balls</th><th class="n" data-field="pressure_econ">Econ</th><th class="n" data-field="runs_saved_per_over_vs_peers">Saved / over</th><th class="n" data-field="balls_per_wicket">Balls / wkt</th><th class="n" data-field="top10_pct">Top-10 rate</th></tr></thead>
+              <tbody data-draw="tabbowl"></tbody>
+            </table>
+          </div>
+          <p class="rr-note">Economy counts the runs charged to the bowler on pressure balls. Saved / over is against every other bowler in the same match and phase.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="rr-sec" id="rr-gaps">
+      <div class="rr-sec-head">
+        <span class="rr-eyebrow">Rajasthan Royals, IPL 2024-26</span>
+        <h2>Where RR need pressure performers</h2>
+        <p class="rr-sub">Middle-overs control is the gap in every season. Death bowling and middle-overs wickets collapsed in 2025 only, and late-innings boundary hitting has fallen behind since 2025.</p>
+      </div>
+      <div class="rr-legend"><span><i class="rrline"></i>RR</span><span><i class="lgline"></i>Rest of the IPL</span></div>
+      <div class="rr-gaps" data-draw="gaps" data-source="rr_gaps"></div>
+    </section>
+
+    <section class="rr-sec" id="auction">
+      <div class="rr-sec-head">
+        <span class="rr-eyebrow">IPL 2027 auction</span>
+        <h2>Who RR can bid for</h2>
+        <p class="rr-sub">The best-ranked players in the same model who are not on any franchise's official IPL 2027 retained list. Players who opted out, retired or are banned are left out.</p>
+      </div>
+      <div class="rr-split">
+        <div class="rr-card">
+          <h3>Available batters</h3>
+          <div class="rr-scroll">
+            <table data-source="auction_batters" data-row-key="player">
+              <thead><tr><th data-field="pool_rank">#</th><th data-field="player">Batter</th><th class="n" data-field="overall_rank">Model rank</th><th data-field="country">Country</th><th data-field="last_ipl_team">Last IPL team</th><th class="n" data-field="sr_vs_peers">SR vs peers</th></tr></thead>
+              <tbody data-draw="poolbat"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="rr-card">
+          <h3>Available bowlers</h3>
+          <div class="rr-scroll">
+            <table data-source="auction_bowlers" data-row-key="player">
+              <thead><tr><th data-field="pool_rank">#</th><th data-field="player">Bowler</th><th class="n" data-field="overall_rank">Model rank</th><th data-field="country">Country</th><th data-field="last_ipl_team">Last IPL team</th><th class="n" data-field="runs_saved_per_over_vs_peers">Saved / over</th></tr></thead>
+              <tbody data-draw="poolbowl"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <p class="rr-note" style="font-size:12px;color:var(--rr-muted)"><span class="chip new">New to IPL</span> no IPL matches 2022-26. <span class="chip flag">2026 skipped</span> did not play IPL 2026; registration for 2027 not yet confirmed.</p>
+    </section>
+
+    <section class="rr-sec" id="method">
+      <div class="rr-sec-head">
+        <span class="rr-eyebrow">Method</span>
+        <h2>How the rankings were built</h2>
+      </div>
+      <div class="rr-method">
+        <div><h3>Pressure</h3><p>A win-probability model built from the data pack scores every ball by how far one ordinary delivery could swing the match. The tensest 25% of balls in each innings, plus balls during a batting collapse, count as pressure.</p></div>
+        <div><h3>Performance</h3><p>Batters are valued by how much each ball changed their side's chance of winning. Bowlers are valued by runs saved against the average for the same situation.</p></div>
+        <div><h3>Fair comparison</h3><p>Short records are pulled towards average, IPL counts more than bilateral T20Is, recent seasons count more, and only players with an above-average record on pressure balls are ranked.</p></div>
+        <div><h3>Reliability</h3><p>Matches were resampled 500 times; the top-10 rate is how often a player stays in. The rankings were also rerun under alternative pressure definitions and sample sizes.</p></div>
+      </div>
+      <p class="rr-foot">Rankings use only the Round 1 data pack (IPL and T20I, 2022-26). The auction lists add the official IPL 2027 retained lists published on 17 November 2026. Full method, tests and limitations are in the submitted report.</p>
+    </section>
+  </main>
+</div>
+
+
+<script>
+
+const DATA = {"picks_batters": [{"rank": 1, "player": "Shreyas Iyer", "pressure_balls": 699, "top10_pct": 77.8, "rank_p10": 1, "rank_median": 4, "rank_p90": 19, "pressure_sr": 158.9, "normal_sr": 144.5, "sr_vs_peers": 2.1, "dismissals_vs_peers_pts": -2.3}, {"rank": 2, "player": "Abhishek Sharma", "pressure_balls": 780, "top10_pct": 80.2, "rank_p10": 1, "rank_median": 4, "rank_p90": 16, "pressure_sr": 186.2, "normal_sr": 184.6, "sr_vs_peers": 29.9, "dismissals_vs_peers_pts": 0.2}, {"rank": 3, "player": "Tim David", "pressure_balls": 514, "top10_pct": 65.6, "rank_p10": 1, "rank_median": 7, "rank_p90": 23, "pressure_sr": 168.8, "normal_sr": 176.7, "sr_vs_peers": 18.8, "dismissals_vs_peers_pts": -3.3}, {"rank": 4, "player": "Vaibhav Sooryavanshi", "pressure_balls": 289, "top10_pct": 61.0, "rank_p10": 1, "rank_median": 7, "rank_p90": 26, "pressure_sr": 212.5, "normal_sr": 225.5, "sr_vs_peers": 46.5, "dismissals_vs_peers_pts": 0.5}, {"rank": 5, "player": "Nicholas Pooran", "pressure_balls": 579, "top10_pct": 60.4, "rank_p10": 2, "rank_median": 8, "rank_p90": 25, "pressure_sr": 174.1, "normal_sr": 148.1, "sr_vs_peers": 27.6, "dismissals_vs_peers_pts": -1.0}, {"rank": 6, "player": "Heinrich Klaasen", "pressure_balls": 593, "top10_pct": 61.6, "rank_p10": 2, "rank_median": 8, "rank_p90": 21, "pressure_sr": 166.1, "normal_sr": 159.8, "sr_vs_peers": 13.4, "dismissals_vs_peers_pts": -2.0}, {"rank": 7, "player": "Rajat Patidar", "pressure_balls": 404, "top10_pct": 55.6, "rank_p10": 2, "rank_median": 9, "rank_p90": 25, "pressure_sr": 183.2, "normal_sr": 155.0, "sr_vs_peers": 31.4, "dismissals_vs_peers_pts": -0.6}, {"rank": 8, "player": "Mitchell Marsh", "pressure_balls": 740, "top10_pct": 61.4, "rank_p10": 3, "rank_median": 8, "rank_p90": 23, "pressure_sr": 160.3, "normal_sr": 152.8, "sr_vs_peers": 10.1, "dismissals_vs_peers_pts": -1.9}, {"rank": 9, "player": "Shubman Gill", "pressure_balls": 930, "top10_pct": 56.6, "rank_p10": 3, "rank_median": 9, "rank_p90": 24, "pressure_sr": 157.0, "normal_sr": 144.8, "sr_vs_peers": 11.1, "dismissals_vs_peers_pts": -1.4}, {"rank": 10, "player": "Ashutosh Sharma", "pressure_balls": 204, "top10_pct": 49.6, "rank_p10": 1, "rank_median": 10, "rank_p90": 40, "pressure_sr": 170.6, "normal_sr": 164.7, "sr_vs_peers": 12.0, "dismissals_vs_peers_pts": -3.0}], "picks_bowlers": [{"rank": 1, "player": "Varun Chakravarthy", "pressure_balls": 913, "top10_pct": 93.8, "rank_p10": 1, "rank_median": 2, "rank_p90": 8, "pressure_econ": 7.75, "normal_econ": 7.98, "runs_saved_per_over_vs_peers": 0.78, "balls_per_wicket": 16.0}, {"rank": 2, "player": "Sunil Narine", "pressure_balls": 704, "top10_pct": 95.8, "rank_p10": 1, "rank_median": 3, "rank_p90": 8, "pressure_econ": 7.11, "normal_econ": 6.63, "runs_saved_per_over_vs_peers": 1.58, "balls_per_wicket": 23.9}, {"rank": 3, "player": "Krunal Pandya", "pressure_balls": 592, "top10_pct": 88.2, "rank_p10": 1, "rank_median": 4, "rank_p90": 11, "pressure_econ": 7.31, "normal_econ": 8.18, "runs_saved_per_over_vs_peers": 1.74, "balls_per_wicket": 20.0}, {"rank": 4, "player": "Rashid Khan", "pressure_balls": 1060, "top10_pct": 78.8, "rank_p10": 1, "rank_median": 5, "rank_p90": 16, "pressure_econ": 7.63, "normal_econ": 7.01, "runs_saved_per_over_vs_peers": 0.71, "balls_per_wicket": 18.6}, {"rank": 5, "player": "Kuldeep Yadav", "pressure_balls": 736, "top10_pct": 81.8, "rank_p10": 2, "rank_median": 5, "rank_p90": 14, "pressure_econ": 7.8, "normal_econ": 7.79, "runs_saved_per_over_vs_peers": 1.01, "balls_per_wicket": 17.2}, {"rank": 6, "player": "Jasprit Bumrah", "pressure_balls": 627, "top10_pct": 67.2, "rank_p10": 2, "rank_median": 7, "rank_p90": 18, "pressure_econ": 7.89, "normal_econ": 6.74, "runs_saved_per_over_vs_peers": 1.89, "balls_per_wicket": 18.8}, {"rank": 7, "player": "Ravindra Jadeja", "pressure_balls": 528, "top10_pct": 52.4, "rank_p10": 3, "rank_median": 10, "rank_p90": 27, "pressure_econ": 7.95, "normal_econ": 7.46, "runs_saved_per_over_vs_peers": 0.58, "balls_per_wicket": 20.0}, {"rank": 8, "player": "Josh Hazlewood", "pressure_balls": 535, "top10_pct": 44.0, "rank_p10": 4, "rank_median": 10, "rank_p90": 28, "pressure_econ": 8.17, "normal_econ": 8.1, "runs_saved_per_over_vs_peers": 0.73, "balls_per_wicket": 17.2}, {"rank": 9, "player": "Wanindu Hasaranga", "pressure_balls": 725, "top10_pct": 39.0, "rank_p10": 6, "rank_median": 12, "rank_p90": 30, "pressure_econ": 8.02, "normal_econ": 8.04, "runs_saved_per_over_vs_peers": 0.5, "balls_per_wicket": 15.5}, {"rank": 10, "player": "Harpreet Brar", "pressure_balls": 288, "top10_pct": 34.8, "rank_p10": 5, "rank_median": 14, "rank_p90": 39, "pressure_econ": 8.38, "normal_econ": 7.97, "runs_saved_per_over_vs_peers": 1.13, "balls_per_wicket": 17.6}], "auction_batters": [{"pool_rank": 1, "player": "Pathum Nissanka", "overall_rank": 36, "country": "Sri Lanka", "last_ipl_team": "Delhi Capitals", "pressure_balls": 400, "note": "", "pressure_sr": 141.9, "sr_vs_peers": 8.5}, {"pool_rank": 2, "player": "Glenn Maxwell", "overall_rank": 40, "country": "Australia", "last_ipl_team": "Punjab Kings", "pressure_balls": 312, "note": "skipped IPL 2026 (Wisden, Dec 2025)", "pressure_sr": 169.7, "sr_vs_peers": 13.6}, {"pool_rank": 3, "player": "Kusal Perera", "overall_rank": 42, "country": "Sri Lanka", "last_ipl_team": "None (2022-26)", "pressure_balls": 130, "note": "", "pressure_sr": 141.5, "sr_vs_peers": 8.3}, {"pool_rank": 4, "player": "Devon Conway", "overall_rank": 45, "country": "New Zealand", "last_ipl_team": "Chennai Super Kings", "pressure_balls": 416, "note": "", "pressure_sr": 143.8, "sr_vs_peers": 0.1}, {"pool_rank": 5, "player": "M Shahrukh Khan", "overall_rank": 49, "country": "India", "last_ipl_team": "Gujarat Titans", "pressure_balls": 159, "note": "", "pressure_sr": 155.1, "sr_vs_peers": 5.6}, {"pool_rank": 6, "player": "Bhanuka Rajapaksa", "overall_rank": 54, "country": "Sri Lanka", "last_ipl_team": "Punjab Kings", "pressure_balls": 147, "note": "", "pressure_sr": 147.6, "sr_vs_peers": 9.4}, {"pool_rank": 7, "player": "Jonny Bairstow", "overall_rank": 60, "country": "England", "last_ipl_team": "Mumbai Indians", "pressure_balls": 131, "note": "", "pressure_sr": 155.0, "sr_vs_peers": 3.0}, {"pool_rank": 8, "player": "Mark Chapman", "overall_rank": 61, "country": "New Zealand", "last_ipl_team": "None (2022-26)", "pressure_balls": 166, "note": "", "pressure_sr": 132.5, "sr_vs_peers": -1.7}, {"pool_rank": 9, "player": "Kamindu Mendis", "overall_rank": 66, "country": "Sri Lanka", "last_ipl_team": "Sunrisers Hyderabad", "pressure_balls": 161, "note": "", "pressure_sr": 113.8, "sr_vs_peers": -7.8}, {"pool_rank": 10, "player": "Nitish Rana", "overall_rank": 69, "country": "India", "last_ipl_team": "Delhi Capitals", "pressure_balls": 325, "note": "", "pressure_sr": 149.5, "sr_vs_peers": 2.7}], "auction_bowlers": [{"pool_rank": 1, "player": "Wanindu Hasaranga", "overall_rank": 9, "country": "Sri Lanka", "last_ipl_team": "Rajasthan Royals", "pressure_balls": 725, "note": "", "pressure_econ": 8.02, "runs_saved_per_over_vs_peers": 0.5}, {"pool_rank": 2, "player": "Moeen Ali", "overall_rank": 11, "country": "England", "last_ipl_team": "Kolkata Knight Riders", "pressure_balls": 226, "note": "skipped IPL 2026 for the PSL (Free Press Journal, Nov 2025)", "pressure_econ": 6.89, "runs_saved_per_over_vs_peers": 0.75}, {"pool_rank": 3, "player": "Trent Boult", "overall_rank": 13, "country": "New Zealand", "last_ipl_team": "Mumbai Indians", "pressure_balls": 636, "note": "", "pressure_econ": 8.9, "runs_saved_per_over_vs_peers": 0.64}, {"pool_rank": 4, "player": "Mujeeb Ur Rahman", "overall_rank": 28, "country": "Afghanistan", "last_ipl_team": "Mumbai Indians", "pressure_balls": 192, "note": "", "pressure_econ": 7.06, "runs_saved_per_over_vs_peers": 0.25}, {"pool_rank": 5, "player": "Sikandar Raza", "overall_rank": 30, "country": "Zimbabwe", "last_ipl_team": "Punjab Kings", "pressure_balls": 297, "note": "", "pressure_econ": 6.97, "runs_saved_per_over_vs_peers": 0.47}, {"pool_rank": 6, "player": "Adam Zampa", "overall_rank": 34, "country": "Australia", "last_ipl_team": "Sunrisers Hyderabad", "pressure_balls": 366, "note": "", "pressure_econ": 7.37, "runs_saved_per_over_vs_peers": 0.54}, {"pool_rank": 7, "player": "Liam Dawson", "overall_rank": 49, "country": "England", "last_ipl_team": "None (2022-26)", "pressure_balls": 123, "note": "", "pressure_econ": 8.0, "runs_saved_per_over_vs_peers": 0.46}, {"pool_rank": 8, "player": "Gudakesh Motie", "overall_rank": 50, "country": "West Indies", "last_ipl_team": "None (2022-26)", "pressure_balls": 199, "note": "", "pressure_econ": 6.98, "runs_saved_per_over_vs_peers": 0.89}, {"pool_rank": 9, "player": "Benjamin Sears", "overall_rank": 51, "country": "New Zealand", "last_ipl_team": "None (2022-26)", "pressure_balls": 160, "note": "", "pressure_econ": 7.22, "runs_saved_per_over_vs_peers": 0.17}, {"pool_rank": 10, "player": "Keshav Maharaj", "overall_rank": 52, "country": "South Africa", "last_ipl_team": "Rajasthan Royals", "pressure_balls": 135, "note": "", "pressure_econ": 8.77, "runs_saved_per_over_vs_peers": -0.09}], "rr_gaps": [{"area": "Death 16-20: runs/over conceded", "season": 2024, "rr": 10.5, "league": 11.3}, {"area": "Death 16-20: boundary % conceded", "season": 2024, "rr": 21.7, "league": 24.5}, {"area": "Middle 7-15: dot % bowled", "season": 2024, "rr": 28.5, "league": 29.3}, {"area": "Middle 7-15: balls per bowler wicket", "season": 2024, "rr": 23.1, "league": 21.6}, {"area": "Death 16-20: boundary % batting", "season": 2024, "rr": 23.9, "league": 24.2}, {"area": "Powerplay 1-6: batting runs/over", "season": 2024, "rr": 8.6, "league": 9.6}, {"area": "Death 16-20: runs/over conceded", "season": 2025, "rr": 12.4, "league": 10.8}, {"area": "Death 16-20: boundary % conceded", "season": 2025, "rr": 27.4, "league": 23.3}, {"area": "Middle 7-15: dot % bowled", "season": 2025, "rr": 24.5, "league": 29.3}, {"area": "Middle 7-15: balls per bowler wicket", "season": 2025, "rr": 32.9, "league": 21.8}, {"area": "Death 16-20: boundary % batting", "season": 2025, "rr": 20.5, "league": 24.1}, {"area": "Powerplay 1-6: batting runs/over", "season": 2025, "rr": 10.9, "league": 9.5}, {"area": "Death 16-20: runs/over conceded", "season": 2026, "rr": 10.7, "league": 10.8}, {"area": "Death 16-20: boundary % conceded", "season": 2026, "rr": 23.3, "league": 24.0}, {"area": "Middle 7-15: dot % bowled", "season": 2026, "rr": 25.6, "league": 28.8}, {"area": "Middle 7-15: balls per bowler wicket", "season": 2026, "rr": 19.1, "league": 22.6}, {"area": "Death 16-20: boundary % batting", "season": 2026, "rr": 20.4, "league": 24.4}, {"area": "Powerplay 1-6: batting runs/over", "season": 2026, "rr": 11.7, "league": 9.9}]};
+const dash = {
+  _draws: [],
+  data(id) { const rows = DATA[id] || []; return { status: 'ok', data: rows }; },
+  draw(name, fn) { this._draws.push([name, fn]); },
+  run() { for (const [name, fn] of this._draws) document.querySelectorAll('[data-draw="' + name + '"]').forEach((el) => fn(el)); }
+};
+
+
+  window.rrNum = (v) => (v === null || v === undefined || v === '' ? NaN : +v);
+  window.rrC = { pink: '#E5157A', pinkDeep: '#B80F61', pinkLine: '#F6C2DB', navy: '#13215B', grey: '#B9BCCB', muted: '#626885', line: '#E8E4EE', ink: '#1A1E33' };
+  const num = window.rrNum;
+  const r1 = (rows) => rows.find((r) => String(r.rank) === '1') || rows[0];
+  function txt(name, src, fn) {
+    dash.draw(name, (el) => {
+      const d = dash.data(src);
+      el.textContent = d.status === 'ok' && d.data.length ? fn(d.data) : '—';
+    });
+  }
+  txt('topbat', 'picks_batters', (r) => r1(r).player);
+  txt('topbowl', 'picks_bowlers', (r) => r1(r).player);
+  txt('k1', 'picks_batters', (r) => d3.format('.1f')(num(r1(r).top10_pct)) + '%');
+  txt('k1w', 'picks_batters', (r) => r1(r).player);
+  txt('k2', 'picks_batters', (r) => d3.format('+.1f')(num(r1(r).dismissals_vs_peers_pts)));
+  txt('k2w', 'picks_batters', (r) => r1(r).player);
+  txt('k3', 'picks_bowlers', (r) => d3.format('.1f')(num(r1(r).top10_pct)) + '%');
+  txt('k3w', 'picks_bowlers', (r) => r1(r).player);
+  txt('k4', 'picks_bowlers', (r) => d3.format('+.2f')(num(r1(r).runs_saved_per_over_vs_peers)));
+  txt('k4w', 'picks_bowlers', (r) => r1(r).player);
+
+
+  function rangeChart(el, src) {
+    const C = window.rrC, num = window.rrNum;
+    const d = dash.data(src);
+    el.replaceChildren();
+    if (d.status === 'error') { el.textContent = 'Failed to load'; return; }
+    if (d.status !== 'ok' || !d.data.length) { el.textContent = '—'; return; }
+    const rows = d.data.map((r) => ({ ...r, rank: num(r.rank), p10: num(r.rank_p10), med: num(r.rank_median), p90: num(r.rank_p90), pct: num(r.top10_pct) })).sort((a, b) => a.rank - b.rank);
+    const W = Math.max(280, el.clientWidth), rowH = 28, top = 6, bottom = 30;
+    const H = top + rows.length * rowH + bottom;
+    const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img')
+      .attr('aria-label', 'Final rank, median and middle 80% of resampled ranks for each of the top 10 players');
+    const lab = svg.append('g');
+    lab.selectAll('text').data(rows).join('text').attr('x', 0).attr('y', (r, i) => top + i * rowH + rowH / 2).attr('dy', '0.35em')
+      .style('fill', C.navy).style('font-size', '12px').style('font-weight', 600).text((r) => r.player);
+    let left = 0; lab.selectAll('text').each(function () { left = Math.max(left, this.getComputedTextLength()); });
+    left += 14;
+    const maxR = Math.max(15, d3.max(rows, (r) => r.p90) + 1);
+    const x = d3.scaleLinear().domain([1, maxR]).range([left, W - 12]);
+    const ticks = [1, 5, 10, 15, 20, 25, 30, 35, 40, 45].filter((t) => t <= maxR && (t === 1 || (x(t) - x(t - 5)) > 22));
+    svg.insert('g', ':first-child').selectAll('line').data(ticks).join('line').attr('x1', (t) => x(t)).attr('x2', (t) => x(t))
+      .attr('y1', top).attr('y2', H - bottom).style('stroke', C.line);
+    svg.append('line').attr('x1', x(10.5)).attr('x2', x(10.5)).attr('y1', top - 2).attr('y2', H - bottom).style('stroke', C.grey).style('stroke-dasharray', '4 3').style('stroke-width', 1.5);
+    const ax = svg.append('g').attr('transform', `translate(0,${H - bottom})`).call(d3.axisBottom(x).tickValues(ticks).tickFormat(d3.format('d')).tickSize(0).tickPadding(8));
+    ax.select('.domain').remove();
+    ax.selectAll('text').style('fill', C.muted).style('font-size', '11px');
+    svg.append('text').attr('x', W - 12).attr('y', H - 2).attr('text-anchor', 'end').style('fill', C.muted).style('font-size', '10px').text('rank');
+    const row = svg.append('g').selectAll('g').data(rows).join('g').attr('transform', (r, i) => `translate(0,${top + i * rowH + rowH / 2})`);
+    row.append('line').attr('x1', (r) => x(r.p10)).attr('x2', (r) => x(r.p90)).style('stroke', C.pinkLine).style('stroke-width', 8).style('stroke-linecap', 'round');
+    row.append('circle').attr('cx', (r) => x(r.med)).attr('r', 4.5).style('fill', '#fff').style('stroke', C.pinkDeep).style('stroke-width', 2);
+    row.append('circle').attr('cx', (r) => x(r.rank)).attr('r', 5.5).style('fill', C.navy);
+    const tip = d3.select(el).append('div').attr('class', 'rr-tip').style('display', 'none');
+    row.append('rect').attr('x', 0).attr('y', -rowH / 2).attr('width', W).attr('height', rowH).style('fill', 'transparent')
+      .on('pointermove', function (ev, r) {
+        const [mx, my] = d3.pointer(ev, el);
+        tip.style('display', null).html('');
+        tip.append('b').text(`${r.rank}. ${r.player}`);
+        tip.append('span').text(`Median resampled rank ${r.med}, middle 80% ${r.p10} to ${r.p90}`);
+        tip.append('span').text(`Top 10 in ${d3.format('.1f')(r.pct)}% of resamples`);
+        const tw = tip.node().offsetWidth;
+        tip.style('left', Math.min(Math.max(0, mx + 14), el.clientWidth - tw) + 'px').style('top', (my + 14) + 'px');
+      })
+      .on('pointerleave', () => tip.style('display', 'none'));
+  }
+  dash.draw('rangebat', (el) => rangeChart(el, 'picks_batters'));
+  dash.draw('rangebowl', (el) => rangeChart(el, 'picks_bowlers'));
+
+
+  function fillTable(tbody, src, cols) {
+    const num = window.rrNum;
+    const d = dash.data(src);
+    tbody.replaceChildren();
+    if (d.status !== 'ok') return;
+    const rows = d.data.slice().sort((a, b) => num(a[cols[0].f]) - num(b[cols[0].f]));
+    for (const r of rows) {
+      const tr = document.createElement('tr');
+      if (r.player) tr.dataset.key = encodeURIComponent(r.player);
+      for (const c of cols) {
+        const td = document.createElement('td');
+        if (c.cls) td.className = typeof c.cls === 'function' ? c.cls(num(r[c.f]), r) : c.cls;
+        if (c.render) c.render(td, num(r[c.f]), r);
+        else td.textContent = c.fmt ? c.fmt(num(r[c.f]), r) : (r[c.f] ?? '');
+        tr.appendChild(td);
+      }
+      tbody.appendChild(tr);
+    }
+  }
+  const f1 = d3.format('.1f'), f2 = d3.format('.2f'), s1 = d3.format('+.1f'), s2 = d3.format('+.2f'), int = d3.format(',d');
+  const pctCell = (td, v) => {
+    const wrap = document.createElement('div'); wrap.className = 'pctcell';
+    const bar = document.createElement('div'); bar.className = 'pctbar';
+    const fill = document.createElement('div'); fill.style.width = Math.max(0, Math.min(100, v)) + '%'; bar.appendChild(fill);
+    const t = document.createElement('span'); t.textContent = d3.format('.0f')(v) + '%';
+    wrap.append(bar, t); td.appendChild(wrap);
+  };
+  const goodPos = (v) => 'n ' + (v > 0 ? 'pos' : v < 0 ? 'neg' : '');
+  const goodNeg = (v) => 'n ' + (v < 0 ? 'pos' : v > 0 ? 'neg' : '');
+  dash.draw('tabbat', (el) => fillTable(el, 'picks_batters', [
+    { f: 'rank', cls: 'rk' }, { f: 'player', cls: 'nm' }, { f: 'pressure_balls', cls: 'n', fmt: int }, { f: 'pressure_sr', cls: 'n', fmt: f1 },
+    { f: 'sr_vs_peers', cls: goodPos, fmt: s1 }, { f: 'dismissals_vs_peers_pts', cls: goodNeg, fmt: s1 }, { f: 'top10_pct', cls: 'n', render: pctCell }]));
+  dash.draw('tabbowl', (el) => fillTable(el, 'picks_bowlers', [
+    { f: 'rank', cls: 'rk' }, { f: 'player', cls: 'nm' }, { f: 'pressure_balls', cls: 'n', fmt: int }, { f: 'pressure_econ', cls: 'n', fmt: f2 },
+    { f: 'runs_saved_per_over_vs_peers', cls: goodPos, fmt: s2 }, { f: 'balls_per_wicket', cls: 'n', fmt: f1 }, { f: 'top10_pct', cls: 'n', render: pctCell }]));
+  const nameCell = (td, v, r) => {
+    const b = document.createElement('span'); b.textContent = r.player; td.appendChild(b);
+    if (r.note) { const c = document.createElement('span'); c.className = 'chip flag'; c.style.marginLeft = '6px'; c.textContent = '2026 skipped'; td.appendChild(c); }
+  };
+  const teamCell = (td, v, r) => {
+    const t = r.last_ipl_team || '';
+    if (t.startsWith('None')) { const c = document.createElement('span'); c.className = 'chip new'; c.textContent = 'New to IPL'; td.appendChild(c); }
+    else td.textContent = t;
+  };
+  dash.draw('poolbat', (el) => fillTable(el, 'auction_batters', [
+    { f: 'pool_rank', cls: 'rk' }, { f: 'player', cls: 'nm', render: nameCell }, { f: 'overall_rank', cls: 'n', fmt: d3.format('d') }, { f: 'country' },
+    { f: 'last_ipl_team', render: teamCell }, { f: 'sr_vs_peers', cls: goodPos, fmt: s1 }]));
+  dash.draw('poolbowl', (el) => fillTable(el, 'auction_bowlers', [
+    { f: 'pool_rank', cls: 'rk' }, { f: 'player', cls: 'nm', render: nameCell }, { f: 'overall_rank', cls: 'n', fmt: d3.format('d') }, { f: 'country' },
+    { f: 'last_ipl_team', render: teamCell }, { f: 'runs_saved_per_over_vs_peers', cls: goodPos, fmt: s2 }]));
+
+
+  // Which direction is good for RR in each area (higher or lower than the league)
+  const RR_BETTER_HIGH = { 'Death 16-20: runs/over conceded': false, 'Death 16-20: boundary % conceded': false, 'Middle 7-15: dot % bowled': true,
+    'Middle 7-15: balls per bowler wicket': false, 'Death 16-20: boundary % batting': true, 'Powerplay 1-6: batting runs/over': true };
+  dash.draw('gaps', (el) => {
+    const C = window.rrC, num = window.rrNum;
+    const d = dash.data('rr_gaps');
+    el.replaceChildren();
+    if (d.status === 'error') { el.textContent = 'Failed to load'; return; }
+    if (d.status !== 'ok' || !d.data.length) { el.textContent = '—'; return; }
+    const areas = Array.from(new Set(d.data.map((r) => r.area)));
+    const parts = areas.map((area) => {
+      const rows = d.data.filter((r) => r.area === area).map((r) => ({ season: +r.season, rr: num(r.rr), lg: num(r.league) })).sort((a, b) => a.season - b.season);
+      const hi = RR_BETTER_HIGH[area];
+      const behind = rows.filter((r) => (hi ? r.rr < r.lg : r.rr > r.lg)).length;
+      const card = document.createElement('div'); card.className = 'rr-card';
+      const tag = document.createElement('span'); tag.className = 'rr-gap-tag ' + (behind ? 'bad' : 'ok');
+      tag.textContent = behind === rows.length ? 'Behind the league every season' : behind ? `Behind the league in ${behind} of ${rows.length} seasons` : 'At or ahead of the league';
+      const h = document.createElement('h3'); h.textContent = area.replace(':', ' ·');
+      const box = document.createElement('div'); box.className = 'rr-chart sm';
+      card.append(tag, h, box); el.appendChild(card);
+      return { box, rows, area };
+    });
+    for (const { box, rows, area } of parts) {
+      const W = Math.max(220, box.clientWidth), H = 160, m = { t: 18, r: 18, b: 24, l: 36 };
+      const vals = rows.flatMap((r) => [r.rr, r.lg]);
+      const pad = (d3.max(vals) - d3.min(vals)) * 0.3 || 1;
+      const y = d3.scaleLinear().domain([d3.min(vals) - pad, d3.max(vals) + pad]).nice(4).range([H - m.b, m.t]);
+      const x = d3.scalePoint().domain(rows.map((r) => r.season)).range([m.l, W - m.r]).padding(0.35);
+      const svg = d3.select(box).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', `${area}: RR against the rest of the IPL, 2024 to 2026`);
+      svg.append('g').selectAll('line').data(y.ticks(4)).join('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', (t) => y(t)).attr('y2', (t) => y(t)).style('stroke', C.line);
+      const ya = svg.append('g').attr('transform', `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4).tickSize(0).tickPadding(6));
+      ya.select('.domain').remove(); ya.selectAll('text').style('fill', C.muted).style('font-size', '11px');
+      const xa = svg.append('g').attr('transform', `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickFormat(d3.format('d')).tickSize(0).tickPadding(8));
+      xa.select('.domain').remove(); xa.selectAll('text').style('fill', C.muted).style('font-size', '11px');
+      const line = (k) => d3.line().x((r) => x(r.season)).y((r) => y(r[k]));
+      svg.append('path').datum(rows).attr('d', line('lg')).style('fill', 'none').style('stroke', C.grey).style('stroke-width', 2);
+      svg.append('path').datum(rows).attr('d', line('rr')).style('fill', 'none').style('stroke', C.pink).style('stroke-width', 3);
+      svg.append('g').selectAll('circle').data(rows).join('circle').attr('cx', (r) => x(r.season)).attr('cy', (r) => y(r.lg)).attr('r', 3.5).style('fill', C.grey);
+      svg.append('g').selectAll('circle').data(rows).join('circle').attr('cx', (r) => x(r.season)).attr('cy', (r) => y(r.rr)).attr('r', 4.5).style('fill', C.pink);
+      svg.append('g').selectAll('text').data(rows).join('text').attr('x', (r) => x(r.season)).attr('y', (r) => y(r.rr) + (r.rr >= r.lg ? -9 : 16))
+        .attr('text-anchor', 'middle').style('font-size', '11px').style('font-weight', 700).style('fill', C.pinkDeep).text((r) => d3.format('.1f')(r.rr));
+    }
+  });
+
+let rrW = 0;
+function rrRender() { dash.run(); }
+rrRender();
+window.addEventListener('resize', () => { const w = window.innerWidth; if (Math.abs(w - rrW) > 30) { rrW = w; rrRender(); } });
+rrW = window.innerWidth;
+</script>
+</body>
+</html>
